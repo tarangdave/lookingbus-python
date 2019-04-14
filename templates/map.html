@@ -1,0 +1,49 @@
+<html>
+<head>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/css/bootstrap.min.css">
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/js/bootstrap.min.js"></script>
+    <link rel="stylesheet" href="../static/css/styles.css">
+    <title>LookingBus by Tarang Dave</title>
+</head>
+<body>
+
+    <div id="map"></div>
+
+</body>
+<script type="text/javascript">
+
+    function initMap() {
+        console.log("gagaga")
+        var directionsDisplay = new google.maps.DirectionsRenderer;
+        var directionsService = new google.maps.DirectionsService;
+        var map = new google.maps.Map(document.getElementById('map'), {
+          zoom: 14,
+          center: {lat: 37.77, lng: -122.447}
+        });
+        directionsDisplay.setMap(map);
+
+        calculateAndDisplayRoute(directionsService, directionsDisplay);
+      }
+
+      function calculateAndDisplayRoute(directionsService, directionsDisplay) {
+        console.log("hahasskdhask")
+        directionsService.route({
+          origin: {lat: 37.77, lng: -122.447},  // Haight.
+          destination: {lat: 37.768, lng: -122.511},  // Ocean Beach.
+          // Note that Javascript allows us to access the constant
+          // using square brackets and a string value as its
+          // "property."
+          travelMode: google.maps.TravelMode['TRANSIT']
+        }, function(response, status) {
+          if (status == 'OK') {
+            console.log(response)
+            directionsDisplay.setDirections(response);
+          } else {
+            console.log('Directions request failed due to ' + status);
+          }
+        });
+      }
+</script>
+<script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAz8rV2Z3gzqQ0TluwI8zk83iDlo4_Tbkw&callback=initMap"></script>
+</html>

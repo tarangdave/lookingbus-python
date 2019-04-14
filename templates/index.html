@@ -4,33 +4,145 @@
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/css/bootstrap.min.css">
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/js/bootstrap.min.js"></script>
     <link rel="stylesheet" href="../static/css/styles.css">
+    <meta name="google-signin-client_id" content="807165949693-ultl81gpi802ueod7gbhlnkhhmimftof.apps.googleusercontent.com">
+    <script src="https://www.gstatic.com/firebasejs/5.9.3/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/5.9.3/firebase-firestore.js"></script>
     <!-- script async defer
     src="https://maps.googleapis.com/maps/api/js?key=<API-KEY>&callback=initMap">
     </script> -->
     <title>LookingBus by Tarang Dave</title>
 </head>
 <body>
+    <div id="fb-root"></div>
+    <script async defer crossorigin="anonymous" src="https://connect.facebook.net/en_GB/sdk.js#xfbml=1&autoLogAppEvents=1&version=v3.2&appId=1021789681544064"></script>
     <div class="login-page">
-    <div class="form">
-        <form class="register-form">
-            <input type="text" placeholder="username"/>
-            <input type="password" placeholder="password"/>
-            <input type="text" placeholder="email address"/>
-            <button>create</button>
-            <p class="message">Already registered? <a href="#">Sign In</a></p>
-        </form>
-        <form class="login-form">
-            <input type="text" placeholder="username"/>
-            <input type="password" placeholder="password"/>
-            <button>login</button>
-            <p class="message">Not registered? <a href="#">Create an account</a></p>
-        </form>
-    </div>
+        <div class="form">
+            <form class="register-form">
+                <input type="text" placeholder="username"/>
+                <input type="password" placeholder="password"/>
+                <input type="text" placeholder="email address"/>
+                <button>create</button>
+                <p class="message">Already registered? <a href="#">Sign In</a></p>
+            </form>
+            <form class="login-form">
+                <input type="text" placeholder="username"/>
+                <input type="password" placeholder="password"/>
+                <button>login</button>
+                <p class="message">Not registered? <a href="#">Create an account</a></p>
+            </form>
+        </div>
+        <div class="row">
+            <div class="col-md-12 col-sm-12 col-lg-12 col-xs-12">
+                <div class="col-md-6 col-sm-6 col-lg-6 col-xs-12">
+                    <div class="g-signin2" data-onsuccess="onSignIn"></div>
+                </div>
+                <div class="col-md-6 col-sm-6 col-lg-6 col-xs-12">
+                    <button onclick="fbLogin();">FB</button>
+                </div>
+            </div>
+        </div>
     </div>
 </body>
 <script type="text/javascript">
+    var clientid = "807165949693-ultl81gpi802ueod7gbhlnkhhmimftof.apps.googleusercontent.com"
+    var clientSec = "HzplPtVfKVT0aBBPaKduHRsi"
+
+    firebase.initializeApp({
+      apiKey: '### FIREBASE API KEY ###',
+      authDomain: '### FIREBASE AUTH DOMAIN ###',
+      projectId: '### CLOUD FIRESTORE PROJECT ID ###'
+    });
+
+    var db = firebase.firestore();
+
     $('.message a').click(function(){
         $('form').animate({height: "toggle", opacity: "toggle"}, "slow");
     });
+
+    function onSignIn(googleUser) {
+      var profile = googleUser.getBasicProfile();
+      console.log("GOOGLE START");
+      console.log('ID: ' + profile.getId()); // Do not send to your backend! Use an ID token instead.
+      console.log('Name: ' + profile.getName());
+      console.log('Image URL: ' + profile.getImageUrl());
+      console.log('Email: ' + profile.getEmail()); // This is null if the 'email' scope is not present.
+      console.log("GOOGLE END");
+    }
+
+
+    // This is called with the results from from FB.getLoginStatus().
+  // Facebook login with JavaScript SDK
+function fbLogin() {
+    FB.login(function (response) {
+        if (response.authResponse) {
+            // Get and display the user profile data
+            getFbUserData();
+        } else {
+            document.getElementById('status').innerHTML = 'User cancelled login or did not fully authorize.';
+        }
+    }, {scope: 'email'});
+}
+
+// Fetch the user profile data from facebook
+function getFbUserData(){
+    FB.api('/me', {locale: 'en_US', fields: 'id,first_name,last_name,email,link,gender,locale,picture'},
+    function (response) {
+        console.log(response)
+    });
+}
+
+  
+
+    window.fbAsyncInit = function() {
+    FB.init({
+      appId      : '1021789681544064',
+      cookie     : true,  // enable cookies to allow the server to access 
+                          // the session
+      xfbml      : true,  // parse social plugins on this page
+      version    : 'v3.1' // The Graph API version to use for the call
+    });
+
+    // Now that we've initialized the JavaScript SDK, we call 
+    // FB.getLoginStatus().  This function gets the state of the
+    // person visiting this page and can return one of three states to
+    // the callback you provide.  They can be:
+    //
+    // 1. Logged into your app ('connected')
+    // 2. Logged into Facebook, but not your app ('not_authorized')
+    // 3. Not logged into Facebook and can't tell if they are logged into
+    //    your app or not.
+    //
+    // These three cases are handled in the callback function.
+
+    FB.getLoginStatus(function(response) {
+        console.log(response)
+        // statusChangeCallback(response);
+    });
+
+  };
+
+  
+
+  // Load the SDK asynchronously
+  (function(d, s, id) {
+    var js, fjs = d.getElementsByTagName(s)[0];
+    if (d.getElementById(id)) return;
+    js = d.createElement(s); js.id = id;
+    js.src = "https://connect.facebook.net/en_US/sdk.js";
+    fjs.parentNode.insertBefore(js, fjs);
+  }(document, 'script', 'facebook-jssdk'));
+
+  // Here we run a very simple test of the Graph API after login is
+  // successful.  See statusChangeCallback() for when this call is made.
+  function testAPI() {
+    // console.log('Welcome!  Fetching your information.... ');
+    FB.api('/me', function(response) {
+      console.log('Successful login for: ' + response.name);
+    //   document.getElementById('status').innerHTML =
+    //     'Thanks for logging in, ' + response.name + '!';
+    });
+  }
+
 </script>
+<script src="https://apis.google.com/js/platform.js" async defer></script>
 </html>

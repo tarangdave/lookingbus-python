@@ -5,8 +5,7 @@
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/js/bootstrap.min.js"></script>
     <link rel="stylesheet" href="../static/css/styles.css">
     <meta name="google-signin-client_id" content="807165949693-ultl81gpi802ueod7gbhlnkhhmimftof.apps.googleusercontent.com">
-    <script src="https://www.gstatic.com/firebasejs/5.9.3/firebase-app.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/5.9.3/firebase-firestore.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/5.9.4/firebase.js"></script>
     <!-- script async defer
     src="https://maps.googleapis.com/maps/api/js?key=<API-KEY>&callback=initMap">
     </script> -->
@@ -47,17 +46,17 @@
     var clientid = "807165949693-ultl81gpi802ueod7gbhlnkhhmimftof.apps.googleusercontent.com"
     var clientSec = "HzplPtVfKVT0aBBPaKduHRsi"
 
-    firebase.initializeApp({
-      apiKey: '### FIREBASE API KEY ###',
-      authDomain: '### FIREBASE AUTH DOMAIN ###',
-      projectId: '### CLOUD FIRESTORE PROJECT ID ###'
-    });
+    var config = {
+        apiKey: "AIzaSyBcTW0gFNsGfU91lIb_7WCX1FPjLQyBnIA",
+        authDomain: "lookingbus-237103.firebaseapp.com",
+        databaseURL: "https://lookingbus-237103.firebaseio.com",
+        projectId: "lookingbus-237103",
+        storageBucket: "lookingbus-237103.appspot.com",
+        messagingSenderId: "807165949693"
+      };
+    firebase.initializeApp(config);
 
-    var db = firebase.firestore();
-
-    $('.message a').click(function(){
-        $('form').animate({height: "toggle", opacity: "toggle"}, "slow");
-    });
+    var rootRef = firebase.database().ref().child('users');
 
     function onSignIn(googleUser) {
       var profile = googleUser.getBasicProfile();
@@ -67,6 +66,8 @@
       console.log('Image URL: ' + profile.getImageUrl());
       console.log('Email: ' + profile.getEmail()); // This is null if the 'email' scope is not present.
       console.log("GOOGLE END");
+
+      pushToFirebase(profile.getEmail());
     }
 
 
@@ -83,11 +84,20 @@ function fbLogin() {
     }, {scope: 'email'});
 }
 
+function pushToFirebase(username) {
+    rootRef.push().set({
+
+        username:username,
+        password: ""
+    });
+}
+
 // Fetch the user profile data from facebook
 function getFbUserData(){
     FB.api('/me', {locale: 'en_US', fields: 'id,first_name,last_name,email,link,gender,locale,picture'},
     function (response) {
         console.log(response)
+        pushToFirebase(response.email);
     });
 }
 

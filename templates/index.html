@@ -17,10 +17,9 @@
     <div class="login-page">
         <div class="form">
             <form class="register-form">
-                <input type="text" placeholder="username"/>
-                <input type="password" placeholder="password"/>
-                <input type="text" placeholder="email address"/>
-                <button>create</button>
+                <input type="text" placeholder="username" name="username" id="username" required/>
+                <input type="password" placeholder="password" name="password" id="password" required/>
+                <button onclick="signupUser(event);">create</button>
                 <p class="message">Already registered? <a href="#">Sign In</a></p>
             </form>
             <form class="login-form">
@@ -43,8 +42,30 @@
     </div>
 </body>
 <script type="text/javascript">
+    $('.message a').click(function(){
+        $('form').animate({height: "toggle", opacity: "toggle"}, "slow");
+    });
+
     var clientid = "807165949693-ultl81gpi802ueod7gbhlnkhhmimftof.apps.googleusercontent.com"
     var clientSec = "HzplPtVfKVT0aBBPaKduHRsi"
+
+    var signupUsername;
+    var signupPassword;
+
+    function signupUser(e){
+        e.preventDefault();
+        signupUsername = $("#username").val()
+        signupPassword = $("#password").val()
+
+        $.ajax({ 
+             type: "POST",
+             url: "/signup",
+             data: {username: signupUsername, password: signupPassword},
+             success: function(data){  
+                console.log(data);
+             }
+         });
+    }
 
     var config = {
         apiKey: "AIzaSyBcTW0gFNsGfU91lIb_7WCX1FPjLQyBnIA",

@@ -23,9 +23,9 @@
                 <p class="message">Already registered? <a href="#">Sign In</a></p>
             </form>
             <form class="login-form">
-                <input type="text" placeholder="username"/>
-                <input type="password" placeholder="password"/>
-                <button>login</button>
+                <input type="text" placeholder="username" name="loginUsername" id="loginUsername"/>
+                <input type="password" placeholder="password" name="loginPassword" id="loginPassword"/>
+                <button onclick="loginUser(event);">login</button>
                 <p class="message">Not registered? <a href="#">Create an account</a></p>
             </form>
         </div>
@@ -52,6 +52,9 @@
     var signupUsername;
     var signupPassword;
 
+    var loginUsername;
+    var loginPassword;
+
     function signupUser(e){
         e.preventDefault();
         signupUsername = $("#username").val()
@@ -61,6 +64,21 @@
              type: "POST",
              url: "/signup",
              data: {username: signupUsername, password: signupPassword},
+             success: function(data){  
+                console.log(data);
+             }
+         });
+    }
+
+    function loginUser(e){
+        e.preventDefault();
+        loginUsername = $("#loginUsername").val();
+        loginPassword = $("#loginPassword").val();
+
+        $.ajax({ 
+             type: "POST",
+             url: "/login",
+             data: {username: loginUsername, password: loginPassword},
              success: function(data){  
                 console.log(data);
              }

@@ -7,33 +7,38 @@
     <title>LookingBus by Tarang Dave</title>
 </head>
 <body>
-
+    <input id="source-input" class="controls" type="text" placeholder="Source">
+    <input id="destination-input" class="controls" type="text" placeholder="Destination">
+    <button onclick="onSubmitClick();" class="go-btn btn btn-primary">Go</button>
     <div id="map"></div>
 
 </body>
 <script type="text/javascript">
+    var srcLat;
+        var srcLong;
+        var destLat;
+        var destLong;
 
-    function initMap() {
-        console.log("gagaga")
+    function onSubmitClick() {
+            initMap(srcLat, srcLong, destLat, destLong)
+        }
+
+    function initMap(srcLat, srcLong, destLat, destLong) {
         var directionsDisplay = new google.maps.DirectionsRenderer;
         var directionsService = new google.maps.DirectionsService;
         var map = new google.maps.Map(document.getElementById('map'), {
           zoom: 14,
-          center: {lat: 37.77, lng: -122.447}
+          center: {lat: srcLat, lng: srcLong}
         });
         directionsDisplay.setMap(map);
 
-        calculateAndDisplayRoute(directionsService, directionsDisplay);
+        calculateAndDisplayRoute(directionsService, directionsDisplay, srcLat, srcLong, destLat, destLong);
       }
 
-      function calculateAndDisplayRoute(directionsService, directionsDisplay) {
-        console.log("hahasskdhask")
+      function calculateAndDisplayRoute(directionsService, directionsDisplay, srcLat, srcLong, destLat, destLong) {
         directionsService.route({
-          origin: {lat: 37.77, lng: -122.447},  // Haight.
-          destination: {lat: 37.768, lng: -122.511},  // Ocean Beach.
-          // Note that Javascript allows us to access the constant
-          // using square brackets and a string value as its
-          // "property."
+          origin: {lat: srcLat, lng: srcLong},
+          destination: {lat: destLat, lng: destLong},
           travelMode: google.maps.TravelMode['TRANSIT']
         }, function(response, status) {
           if (status == 'OK') {
@@ -43,7 +48,64 @@
             console.log('Directions request failed due to ' + status);
           }
         });
-      }
+}
+
+
+        function initAutocomplete() {
+          var map = new google.maps.Map(document.getElementById('map'), {
+            center: {lat: -33.8688, lng: 151.2195},
+            zoom: 13,
+            mapTypeId: 'roadmap'
+          });
+
+          // Create the search box and link it to the UI element.
+          var src_input = document.getElementById('source-input');
+          var dest_input = document.getElementById('destination-input');
+
+          var src_searchBox = new google.maps.places.SearchBox(src_input);
+          var dest_searchBox = new google.maps.places.SearchBox(dest_input);
+
+          map.controls[google.maps.ControlPosition.TOP_LEFT].push(src_input);
+          map.controls[google.maps.ControlPosition.TOP_LEFT].push(dest_input);
+
+          // Bias the SearchBox results towards current map's viewport.
+          map.addListener('bounds_changed', function() {
+            src_searchBox.setBounds(map.getBounds());
+            dest_searchBox.setBounds(map.getBounds());
+          });
+
+          var markers = [];
+          // Listen for the event fired when the user selects a prediction and retrieve
+          // more details for that place.
+          src_searchBox.addListener('places_changed', function() {
+            var places = src_searchBox.getPlaces();
+            console.log("source")
+            srcLat = places[0].geometry.viewport.ma.j
+            srcLong = places[0].geometry.viewport.ga.j
+
+
+            if (places.length == 0) {
+              return;
+            }
+
+          });
+
+          dest_searchBox.addListener('places_changed', function() {
+            var places = dest_searchBox.getPlaces();
+            console.log("Destination")
+            destLat = places[0].geometry.viewport.ma.j
+            destLong = places[0].geometry.viewport.ga.j
+
+
+            if (places.length == 0) {
+              return;
+            }
+
+          });
+
+        }
+
 </script>
-<script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAz8rV2Z3gzqQ0TluwI8zk83iDlo4_Tbkw&callback=initMap"></script>
+<!-- <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAz8rV2Z3gzqQ0TluwI8zk83iDlo4_Tbkw"></script> -->
+<script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAz8rV2Z3gzqQ0TluwI8zk83iDlo4_Tbkw&libraries=places&callback=initAutocomplete"></script>
 </html>

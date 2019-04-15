@@ -1,5 +1,16 @@
 @import url(https://fonts.googleapis.com/css?family=Roboto:300);
-
+.controls {
+  width: 300px;
+  height: 50px;
+}
+.go-btn {
+      position: absolute;
+    top: 0px;
+    z-index: 1000;
+    left: 44%;
+    width: 70px;
+    height: 50px;
+}
 .login-page {
   width: 360px;
   padding: 8% 0 0;

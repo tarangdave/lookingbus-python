@@ -35,7 +35,7 @@
                     <div class="g-signin2" data-onsuccess="onSignIn"></div>
                 </div>
                 <div class="col-md-6 col-sm-6 col-lg-6 col-xs-12">
-                    <button onclick="fbLogin();">FB</button>
+                    <div onclick="fbLogin();"><img src="https://i.stack.imgur.com/ZW4QC.png"></div>
                 </div>
             </div>
         </div>
@@ -66,6 +66,7 @@
              data: {username: signupUsername, password: signupPassword},
              success: function(data){  
                 console.log(data);
+                window.location.replace("/admin");
              }
          });
     }
@@ -80,7 +81,10 @@
              url: "/login",
              data: {username: loginUsername, password: loginPassword},
              success: function(data){  
-                console.log(data);
+                data = JSON.parse(data)
+                if (data.status == "success"){
+                    window.location.replace("/admin");
+                }
              }
          });
     }
@@ -99,14 +103,10 @@
 
     function onSignIn(googleUser) {
       var profile = googleUser.getBasicProfile();
-      console.log("GOOGLE START");
-      console.log('ID: ' + profile.getId()); // Do not send to your backend! Use an ID token instead.
-      console.log('Name: ' + profile.getName());
-      console.log('Image URL: ' + profile.getImageUrl());
-      console.log('Email: ' + profile.getEmail()); // This is null if the 'email' scope is not present.
-      console.log("GOOGLE END");
-
       pushToFirebase(profile.getEmail());
+      if (profile){
+        window.location.replace("/admin");
+      }
     }
 
 
@@ -137,6 +137,7 @@ function getFbUserData(){
     function (response) {
         console.log(response)
         pushToFirebase(response.email);
+        window.location.replace("/admin");
     });
 }
 
@@ -165,7 +166,9 @@ function getFbUserData(){
 
     FB.getLoginStatus(function(response) {
         console.log(response)
-        // statusChangeCallback(response);
+        if (response.status == "connected"){
+            window.location.replace("/admin");
+        }
     });
 
   };

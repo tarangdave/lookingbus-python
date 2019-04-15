@@ -6,6 +6,7 @@
     <link rel="stylesheet" href="../static/css/styles.css">
     <meta name="google-signin-client_id" content="807165949693-ultl81gpi802ueod7gbhlnkhhmimftof.apps.googleusercontent.com">
     <script src="https://www.gstatic.com/firebasejs/5.9.4/firebase.js"></script>
+    <script src="https://www.google.com/recaptcha/api.js" async defer></script>
     <!-- script async defer
     src="https://maps.googleapis.com/maps/api/js?key=<API-KEY>&callback=initMap">
     </script> -->
@@ -19,6 +20,7 @@
             <form class="register-form">
                 <input type="text" placeholder="username" name="username" id="username" required/>
                 <input type="password" placeholder="password" name="password" id="password" required/>
+                <div class="g-recaptcha" data-sitekey="6LdNNZ4UAAAAAKP1NUKIVVpMkkNDIXo9XdTbX03Y"></div>
                 <button onclick="signupUser(event);">create</button>
                 <p class="message">Already registered? <a href="#">Sign In</a></p>
             </form>

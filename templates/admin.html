@@ -1,0 +1,60 @@
+<html>
+<head>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/css/bootstrap.min.css">
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/js/bootstrap.min.js"></script>
+    <link rel="stylesheet" href="../static/css/styles.css">
+<!--     <meta name="google-signin-client_id" content="807165949693-ultl81gpi802ueod7gbhlnkhhmimftof.apps.googleusercontent.com">
+    <script src="https://www.gstatic.com/firebasejs/5.9.4/firebase.js"></script> -->
+    <!-- script async defer
+    src="https://maps.googleapis.com/maps/api/js?key=<API-KEY>&callback=initMap">
+    </script> -->
+    <title>LookingBus by Tarang Dave</title>
+</head>
+<body>
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Username</th>
+                <th>Password</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+        <tbody></tbody>
+    </table>
+
+    <script>
+        $.ajax({ 
+             type: "GET",
+             url: "/table",
+             success: function(data){  
+                data = JSON.parse(data);
+                var newHTML = $.map(data, function(value){
+                    console.log(value)
+                            return('<tr><td><div class="col-md-4 col-sm-4 col-lg-4 col-xs-12"><span>'+value[1]+'</span></div></td>'
+                                +'<td><div class="col-md-4 col-sm-4 col-lg-4 col-xs-12"><span>'+value[2]+'</span></div></td>'
+                                +'<td><div class="col-md-4 col-sm-4 col-lg-4 col-xs-12"><span><button id="delete-button" class="btn btn-danger" data-id="'+value[0]+'">Delete</button></span></div></td></tr>')
+                        });
+                $("tbody").html(newHTML.join(""));
+
+             }
+         });
+
+            $(document).ready(function() {
+                $(".table").on('click','#delete-button',function(){
+                    var id = $(this).data("id");
+                    
+                    $.ajax({
+                        type: "GET",
+                        url: "/delete",
+                        data: {userid: id},
+                        success: function(data) {
+                            console.log(data)
+                            location.reload()
+                        }
+                    })
+                })
+            });
+    </script>
+</body>
+</html>

@@ -27,6 +27,10 @@ def home():
 def map():
     return render_template("map.html")
 
+@app.route("/admin")
+def admin():
+	return render_template("admin.html")
+
 @app.route("/signup", methods=["POST"])
 def signup():
 	username = request.form['username']
@@ -57,7 +61,31 @@ def login():
 
 	return json.dumps({"status": "Invalid Credentials"})
 	
+@app.route("/table", methods=["GET"])
+def table():
+	db = firebase.database()
 
+	resList = []
+
+	all_users = db.child("users").get()
+	for user in all_users.each():
+		res = {}
+		res = user.key(), user.val()["username"], user.val()["password"]
+		resList.append(res)
+
+
+	return json.dumps(resList)
+
+@app.route("/delete", methods=["GET"])
+def delete():
+	userid = request.args.get("userid")
+	print(userid)
+
+	db = firebase.database()
+
+	db.child("users").child(userid).remove()
+
+	return json.dumps({"status": "success"})
 
 if __name__ == '__main__':
     app.run(debug=True)

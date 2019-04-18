@@ -7,3 +7,5 @@
 ### Running the project
 + run ``` python views.py ```
 + Visit ``` localhost:5000 ``` to view the application
+
+#### [Live Demo](http://look.tarangdave.club/)

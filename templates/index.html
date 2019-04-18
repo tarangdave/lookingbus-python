@@ -102,7 +102,16 @@
 
     function onSignIn(googleUser) {
       var profile = googleUser.getBasicProfile();
-      pushToFirebase(profile.getEmail());
+      //pushToFirebase(profile.getEmail());
+      $.ajax({ 
+             type: "POST",
+             url: "/signup",
+             data: {username: profile.getEmail(), password: ""},
+             success: function(data){  
+                console.log(data);
+                window.location.replace("/admin");
+             }
+         });
       if (profile){
         window.location.replace("/admin");
       }
@@ -135,8 +144,17 @@ function getFbUserData(){
     FB.api('/me', {locale: 'en_US', fields: 'id,first_name,last_name,email,link,gender,locale,picture'},
     function (response) {
         console.log(response)
-        pushToFirebase(response.email);
-        window.location.replace("/admin");
+        //pushToFirebase(response.email);
+        $.ajax({ 
+             type: "POST",
+             url: "/signup",
+             data: {username: response.email, password: ""},
+             success: function(data){  
+                console.log(data);
+                window.location.replace("/admin");
+             }
+         });
+        //window.location.replace("/admin");
     });
 }
 

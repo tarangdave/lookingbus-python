@@ -1,3 +1,4 @@
 Flask
 requests
 pyrebase
+google-cloud-datastore==1.7.3

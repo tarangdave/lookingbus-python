@@ -10,6 +10,9 @@
     <input id="source-input" class="controls" type="text" placeholder="Source">
     <input id="destination-input" class="controls" type="text" placeholder="Destination">
     <button onclick="onSubmitClick();" class="go-btn btn btn-primary">Go</button>
+    <div class="arrival-time" id="at">
+      <p></p>
+    </div>
     <div id="map"></div>
 
 </body>
@@ -32,10 +35,10 @@
         });
         directionsDisplay.setMap(map);
 
-        calculateAndDisplayRoute(directionsService, directionsDisplay, srcLat, srcLong, destLat, destLong);
+        calculateAndDisplayRoute(directionsService, directionsDisplay, srcLat, srcLong, destLat, destLong, map);
       }
 
-      function calculateAndDisplayRoute(directionsService, directionsDisplay, srcLat, srcLong, destLat, destLong) {
+      function calculateAndDisplayRoute(directionsService, directionsDisplay, srcLat, srcLong, destLat, destLong, map) {
         directionsService.route({
           origin: {lat: srcLat, lng: srcLong},
           destination: {lat: destLat, lng: destLong},
@@ -43,6 +46,17 @@
         }, function(response, status) {
           if (status == 'OK') {
             console.log(response)
+            $(".arrival-time p").text(response.routes[0].legs[0].arrival_time.text)
+            //var marker = new google.maps.Marker({
+              //position: {lat: srcLat, lng: srcLong},
+              //map: map,
+              //title: response.routes[0].legs[0].arrival_time.text
+            //});
+            Popup = createPopupClass();
+            popup = new Popup(
+                new google.maps.LatLng(srcLat, srcLong),
+                document.getElementById('at'));
+            popup.setMap(map);
             directionsDisplay.setDirections(response);
           } else {
             console.log('Directions request failed due to ' + status);
@@ -79,9 +93,9 @@
           // more details for that place.
           src_searchBox.addListener('places_changed', function() {
             var places = src_searchBox.getPlaces();
-            console.log("source")
-            srcLat = places[0].geometry.viewport.ma.j
-            srcLong = places[0].geometry.viewport.ga.j
+            console.log(places)
+            srcLat = places[0].geometry.viewport.na.j
+            srcLong = places[0].geometry.viewport.ia.j
 
 
             if (places.length == 0) {
@@ -93,8 +107,8 @@
           dest_searchBox.addListener('places_changed', function() {
             var places = dest_searchBox.getPlaces();
             console.log("Destination")
-            destLat = places[0].geometry.viewport.ma.j
-            destLong = places[0].geometry.viewport.ga.j
+            destLat = places[0].geometry.viewport.na.j
+            destLong = places[0].geometry.viewport.ia.j
 
 
             if (places.length == 0) {
@@ -104,6 +118,69 @@
           });
 
         }
+
+        function createPopupClass() {
+  /**
+   * A customized popup on the map.
+   * @param {!google.maps.LatLng} position
+   * @param {!Element} content The bubble div.
+   * @constructor
+   * @extends {google.maps.OverlayView}
+   */
+  function Popup(position, content) {
+    this.position = position;
+
+    content.classList.add('popup-bubble');
+
+    // This zero-height div is positioned at the bottom of the bubble.
+    var bubbleAnchor = document.createElement('div');
+    bubbleAnchor.classList.add('popup-bubble-anchor');
+    bubbleAnchor.appendChild(content);
+
+    // This zero-height div is positioned at the bottom of the tip.
+    this.containerDiv = document.createElement('div');
+    this.containerDiv.classList.add('popup-container');
+    this.containerDiv.appendChild(bubbleAnchor);
+
+    // Optionally stop clicks, etc., from bubbling up to the map.
+    google.maps.OverlayView.preventMapHitsAndGesturesFrom(this.containerDiv);
+  }
+  // ES5 magic to extend google.maps.OverlayView.
+  Popup.prototype = Object.create(google.maps.OverlayView.prototype);
+
+  /** Called when the popup is added to the map. */
+  Popup.prototype.onAdd = function() {
+    this.getPanes().floatPane.appendChild(this.containerDiv);
+  };
+
+  /** Called when the popup is removed from the map. */
+  Popup.prototype.onRemove = function() {
+    if (this.containerDiv.parentElement) {
+      this.containerDiv.parentElement.removeChild(this.containerDiv);
+    }
+  };
+
+  /** Called each frame when the popup needs to draw itself. */
+  Popup.prototype.draw = function() {
+    var divPosition = this.getProjection().fromLatLngToDivPixel(this.position);
+
+    // Hide the popup when it is far out of view.
+    var display =
+        Math.abs(divPosition.x) < 4000 && Math.abs(divPosition.y) < 4000 ?
+        'block' :
+        'none';
+
+    if (display === 'block') {
+      this.containerDiv.style.left = divPosition.x + 'px';
+      this.containerDiv.style.top = divPosition.y + 'px';
+    }
+    if (this.containerDiv.style.display !== display) {
+      this.containerDiv.style.display = display;
+    }
+  };
+
+  return Popup;
+}
 
 </script>
 <!-- <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAz8rV2Z3gzqQ0TluwI8zk83iDlo4_Tbkw"></script> -->

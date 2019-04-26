@@ -53,21 +53,30 @@
 
     var loginUsername;
     var loginPassword;
+    var verfied = false
+    
 
     function signupUser(e){
         e.preventDefault();
         signupUsername = $("#username").val()
         signupPassword = $("#password").val()
+        var response = grecaptcha.getResponse();
 
-        $.ajax({ 
-             type: "POST",
-             url: "/signup",
-             data: {username: signupUsername, password: signupPassword},
-             success: function(data){  
-                console.log(data);
-                window.location.replace("/admin");
-             }
-         });
+        if(response.length == 0){
+            console.log("not verified")
+            console.log("verfied captcha failed")
+        }
+        else{
+            $.ajax({ 
+                type: "POST",
+                url: "/signup",
+                data: {username: signupUsername, password: signupPassword},
+                success: function(data){  
+                    console.log(data);
+                    window.location.replace("/admin");
+                }
+            });
+        }
     }
 
     function loginUser(e){
